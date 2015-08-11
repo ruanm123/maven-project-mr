@@ -18,8 +18,6 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 		<spring:bean id="Bean" name="Bean" class="com.mulesoft.training.Database" />
 	</spring:beans>
 
-	<jms:activemq-connector name="Active_MQ" brokerURL="vm://localhost" validateConnections="true" doc:name="Active MQ" />
-
 	<flow name="retrieveFlights">
 		<http:listener config-ref="HTTPListener8084" path="/flights" doc:name="HTTP" />
 		<db:select config-ref="Derby_Configuration" doc:name="Database">
@@ -27,12 +25,6 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 		</db:select>
         <set-property propertyName="Content-Type" value="application/json" doc:name="Set Content-Type"/>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
-		<jms:outbound-endpoint queue="log" connector-ref="Active_MQ" doc:name="produce to log queue" />
-	</flow>
-
-	<flow name="logDBResults">
-		<jms:inbound-endpoint queue="log" connector-ref="Active_MQ" doc:name="Consume from Log Queue" />
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
 	</flow>
 
 	<flow name="sayHello">
